@@ -1,0 +1,8 @@
+*.pyc
+*.DS_Store
+data.zip
+data/
+examples/editing-data/
+examples/data/
+logs/
+hugging_cache/

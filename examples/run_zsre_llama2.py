@@ -1,6 +1,6 @@
 import os.path
 import sys
-sys.path.append('..')
+sys.path.append('/home/icoderzqliu/program/EasyEdit')
 import json
 import random
 from easyeditor import FTHyperParams, IKEHyperParams, KNHyperParams, MEMITHyperParams, ROMEHyperParams
@@ -13,9 +13,9 @@ import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--editing_method', required=True, type=str)
-    parser.add_argument('--hparams_dir', required=True, type=str)
-    parser.add_argument('--data_dir', required=True, type=str)
+    parser.add_argument('--editing_method', default='ROME', required=False, type=str)
+    parser.add_argument('--hparams_dir', default='./hparams/ROME/llama-7b', required=False, type=str)
+    parser.add_argument('--data_dir', default='./data', required=False, type=str)
     parser.add_argument('--ds_size', default=None, type=int)
     parser.add_argument('--metrics_save_dir', default='./', type=str)
 
