@@ -6,3 +6,4 @@ examples/editing-data/
 examples/data/
 logs/
 hugging_cache/
+**/__pycache__

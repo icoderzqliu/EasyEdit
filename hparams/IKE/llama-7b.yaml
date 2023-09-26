@@ -1,7 +1,7 @@
 alg_name: "IKE"
-model_name: "./hugging_cache/llama-2-7b"
-sentence_model_name: "./hugging_cache/all-MiniLM-L6-v2"
+model_name: "/home/icoderzqliu/program/EasyEdit/hugging_cache/Llama-2-7b-hf"
+sentence_model_name: "/home/icoderzqliu/program/EasyEdit/hugging_cache/all-MiniLM-L6-v2"
 device: 0
-results_dir: "./results"
+results_dir: "/home/icoderzqliu/program/EasyEdit/results"
 
 k: 32
