@@ -14,7 +14,7 @@ import torch
 from transformers import AutoTokenizer
 from ..util import HyperParams
 from .portability_evaluate import compute_portability_quality
-from .evaluate_utils import test_seq2seq_batch_prediction_acc, test_batch_prediction_acc, test_prediction_acc,test_generation, PPL
+from .evaluate_utils import test_seq2seq_batch_prediction_acc, test_batch_prediction_acc, test_prediction_acc,test_generation_quality, PPL
 
 def compute_edit_quality(
     model,
@@ -23,7 +23,8 @@ def compute_edit_quality(
     tok: AutoTokenizer,
     record: typing.Dict,
     device,
-    eval_metric: str = 'token_em'
+    eval_metric: str = 'token_em',
+    test_generation = False
 ) -> typing.Dict:
     """
     Given a rewritten model, computes generalization and specificity metrics for
@@ -70,8 +71,8 @@ def compute_edit_quality(
                                             record['portability'][portability_key]['prompt'],
                                             record['portability'][portability_key]['ground_truth'], device=device)
             )
-    if eval_metric != 'ppl':
-        ret['fluency'] = test_generation(model=model,tok=tok,prefixes=rewrite_prompts,max_out_len=50)
+    if  test_generation:
+        ret['fluency'] = test_generation_quality(model=model,tok=tok,prefixes=rewrite_prompts if isinstance(rewrite_prompts,list) else [rewrite_prompts,], max_out_len=100)
     return ret
 
 def compute_rewrite_or_rephrase_quality(

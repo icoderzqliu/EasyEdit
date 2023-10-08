@@ -1,9 +1,9 @@
 alg_name: "FT"
-model_name: "./hugging_cache/llama-2-7b"
+model_name: "/mnt/16t/xzwnlp/EasyEditest/hugging_cache/internlm-7b"
 device: 0
 
-layers: [21]
-num_steps: 25
+layers: [0,31]
+num_steps: 40
 batch_size: 1
 max_length: 40
 lr: 5e-4
