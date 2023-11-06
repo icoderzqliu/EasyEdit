@@ -8,3 +8,8 @@ logs/
 hugging_cache/
 **/__pycache__
 results/
+examples/WikiBio
+examples/wiki_recent
+.vscode
+logs
+results

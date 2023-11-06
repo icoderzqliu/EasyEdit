@@ -43,18 +43,25 @@ class BaseTrainer:
         else:
             self.original_model = self.model.model
 
-        self.model.to(self.config.device)
+        if self.config.model_parallel:
+            self.config.device = self.model.model.device
+        if not self.config.model_parallel and hasattr(self.config, 'device'):
+            self.model.to(self.config.device)
 
         self.train_set = train_set
         self.val_set = val_set
 
-        if 't5' in self.config.model_class.lower():
+        if 'minigpt4' in self.config.model_name.lower() or 'blip2' in self.config.model_name.lower():
+            collate_fn = train_set.collate_fn
+        elif 't5' in self.config.model_class.lower():
             collate_fn = train_set.collate_fn
         elif 'gpt' in self.config.model_class.lower():
             collate_fn = train_set.collate_gpt_fn
         elif 'llama' in self.config.model_class.lower():
             collate_fn = train_set.collate_gpt_fn
         elif 'automodel' in self.config.model_class.lower():
+            collate_fn = train_set.collate_gpt_fn
+        elif 'qwen' in self.config.model_name.lower():
             collate_fn = train_set.collate_gpt_fn
         else:
             raise NotImplementedError(f'Model {self.config.model_class} not supported yet.')
@@ -150,14 +157,12 @@ class BaseTrainer:
             LOG.info(f'MAX EPOCH: {self.config.max_epochs}, set max iters to {self.config.max_iters}')
 
         self.epoches = round(float(self.config.max_iters) / (len(self.train_set) / self.config.batch_size))
-
         self.global_iter = 0
         for epoch in range(self.epoches):
             for i, batch in enumerate(self.train_loader):
                 self.global_iter += 1
                 if self.global_iter >= self.config.max_iters:
                     break
-
                 if not self.config.eval_only:
                     train_info = self.train_step(batch)
                     averager.add(train_info)
@@ -166,14 +171,11 @@ class BaseTrainer:
                         avg_info = averager.average()
                         averager.reset()
                         self.echo(self.global_iter, avg_info)
-
                 if self.global_iter % self.config.val_interval == 0:
                     val_info = self.validate(steps=self.config.val_steps)
                     self.echo(self.global_iter, val_info)
-
                     if stopper.update(self.global_iter, val_info):
                         self.save_state(val_info)  # New best
-
                     if stopper.should_stop():
                         LOG.info(
                             f"No decrease in {self.config.early_stop_key} for {self.config.early_stop_patience} steps"
